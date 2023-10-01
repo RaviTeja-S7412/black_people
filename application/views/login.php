@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+    
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
     <title>Login Page</title>
     <style>
@@ -65,10 +71,10 @@
 <body>
     <h2><span style="color: red; font-family: Verdana, Geneva, Tahoma, sans-serif;">Login Page</span></h2>
     
-    <form action="admin.html" method="POST">
+    <form method="POST" id="loginUser">
         <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" style="width: 280px;" required="">
+            <label for="username">Email:</label>
+            <input type="text" id="email" name="email" style="width: 280px;" required="">
         </div>
         <div>
             <label for="password">Password:</label>
@@ -80,4 +86,36 @@
     </form>
 
 </body>
+
+
+<script>
+    $(document).ready(function(){
+        $("#loginUser").submit(function(e){
+        e.preventDefault();
+        var fdata = $(this).serialize();
+        $.ajax({
+            "url": "<?php echo base_url("home/do_login") ?>",
+            "type": "POST",
+            "data" : fdata,
+            "dataType": 'json',
+            "success" : function(data){
+            if(data.status == 200){
+                // setTimeout(home, 3000); 
+                window.location.href = "<?php echo base_url("home/dashboard")?>";
+            }else{
+                Swal.fire(
+                'Error',
+                data.message,
+                'error'
+                )
+            }
+            },
+            "error" : function(data){
+            console.log(data);
+            }
+        })
+        })
+
+    });
+</script>
 </html>
