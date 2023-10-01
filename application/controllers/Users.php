@@ -31,6 +31,120 @@ class Users extends CI_Controller {
 		$this->load->view('users_view', $data);
 	}
 
+    
+    public function saveData()
+	{
+        // print_r($_POST);
+        $fname=$this->input->post('fname');
+		$lname=$this->input->post('lname');
+        $password = $this->secure->encrypt($this->input->post('password'));
+		$mobile=$this->input->post('mobile');
+		$email=$this->input->post('email');
+		$designation=$this->input->post('designation');
+        if($this->input->post('record_id') == ""){
+            $query = $this->db->query("select * from tbl_users where email = '".$email."'");
+            if($query->num_rows() > 0){
+                echo "error1";
+            }else{
+                $data = array(
+                    'first_name' => $fname, 
+                    'last_name'  => $lname, 
+                    'email'  => $email, 
+                    'mobile'  => $mobile, 
+                    'password'  => $password, 
+                    'station'  => "-", 
+                    'role'  => "employee", 
+                    'status' => 'Active', 
+                    'created_date'  => date('Y-m-d H:i:s')
+                );
+                // print_r($data);
+                $q1 =$this->db->insert('tbl_users', $data);
+                // echo $this->db->last_query();
+            }
+
+            if($q1){
+                echo "success";
+            }
+            else{
+                echo "error";
+            }
+        }else{
+            $record_id=$this->input->post('record_id');
+            $fname=$this->input->post('fname');
+            $lname=$this->input->post('lname');
+            $password=$this->input->post('password');
+            $mobile=$this->input->post('mobile');
+            $email=$this->input->post('email');
+
+            $data = array(
+                'first_name' => $fname, 
+                'last_name'  => $lname, 
+                'email'  => $email, 
+                'mobile'  => $mobile, 
+                'password'  => $password, 
+                'status' => 'Active'
+            );
+            $this->db->where('id', $record_id);
+            $q1 =$this->db->update('tbl_users', $data);
+            $user_id = $this->db->insert_id();
+            if($q1){
+                echo "success";
+            }
+            else{
+                echo "error";
+            }
+
+        }
+		
+        // SELECT `id`, `first_name`, `last_name`, `mobile`, `email`, `password`, `station`, `created_date`, `role`, `status` FROM `tbl_users` WHERE 1
+
+		
+	}
+
+    public function getUserDetails()
+	{ 
+        $query = $this->db->query("SELECT * FROM `tbl_users` WHERE 1=1 AND status = 'Active' AND id='".$this->input->post('user_id')."'");
+        // echo $this->db->last_query();
+		if($query){
+            $res = $query->result_array();
+            $pass =$this->secure->decrypt($res[0]['password']);
+            $data[] = array(
+                'id'  => $res[0]['id'], 
+                'first_name' => $res[0]['first_name'], 
+                'last_name'  => $res[0]['last_name'], 
+                'email'  => $res[0]['email'], 
+                'mobile'  => $res[0]['mobile'], 
+                'password'  =>$pass
+            );
+            // print_r($data);
+		    echo json_encode($data);
+		}else{
+				return false;
+		}
+	}
+
+	public function deleteUser()
+	{
+		$user_id=$this->input->post('user_id');
+		$status=$this->input->post('status');
+
+		if($status == 'Active'){ $stat = "Inactive";}else{ $stat = "Active";}
+
+		$data = array( 
+            'status' => $stat
+        );
+        $this->db->where('id', $user_id);
+        $q1 =$this->db->update('tbl_users', $data);
+        $user_id = $this->db->insert_id();
+		if($q1){
+			echo "success";
+		}
+		else{
+			echo "error";
+		}
+	}
+
+
 	// public function index()
 	// {
 	// 	$this->load->view('index');
