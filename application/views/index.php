@@ -5,8 +5,7 @@
 
   <div class="content">
     <div class="search-bar">
-      <form id="search-form" action="UserResult.html" method="GET">
-      <button type="submit">Search</button>
+      <a href="<? echo base_url('home/search') ?>"><button type="submit">Search</button></a>
     </div>
 
     <div class="image-slider">
@@ -31,32 +30,25 @@
       </div>
 
     <h1>Featured Articles</h1>
-    <div class="link-container">
-      <a href="https://www.semanticscholar.org/paper/CorrAUC%3A-A-Malicious-Bot-IoT-Traffic-Detection-in-Shafiq-Tian/026cbbb91e5a0d5b606917d14b385a2b84fee64e">The Black revolution on campus</a>
-    </div>
 
-    <div class="description-container">
-        <p style="font-style: italic;">M Biondi - 2019 - degruyter.com</p>
-      <p>The Black Revolution on Campus is the definitive account of an extraordinary but forgotten chapter of the black freedom struggle. In the late 1960s and early 1970s, Black students organized hundreds of protests that sparked a period of crackdown, negotiation, and reform that profoundly transformed college life. At stake was the very mission of higher education. Black students demanded that public universities serve their communities; that private universities rethink the mission of elite education; and that black colleges embrace self-determination and resist the threat of integration. Most crucially, black students demanded a role in the definition of scholarly knowledge.</p>
-    </div>
-<hr>
-    <div class="link-container">
-        <a href="https://www.semanticscholar.org/paper/CorrAUC%3A-A-Malicious-Bot-IoT-Traffic-Detection-in-Shafiq-Tian/026cbbb91e5a0d5b606917d14b385a2b84fee64e">The Black revolution on campus</a>
-      </div>
-  
-      <div class="description-container">
-          <p style="font-style: italic;">M Biondi - 2019 - degruyter.com</p>
-        <p>The Black Revolution on Campus is the definitive account of an extraordinary but forgotten chapter of the black freedom struggle. In the late 1960s and early 1970s, Black students organized hundreds of protests that sparked a period of crackdown, negotiation, and reform that profoundly transformed college life. At stake was the very mission of higher education. Black students demanded that public universities serve their communities; that private universities rethink the mission of elite education; and that black colleges embrace self-determination and resist the threat of integration. Most crucially, black students demanded a role in the definition of scholarly knowledge.</p>
-      </div>
-<hr>
+    <? 
+      $articles =  $this->db->order_by('rand()')->limit(3)->get_where('tbl_pdfs')->result(); 
+      foreach($articles as $a){
+        $text = json_decode($a->extracted_text);
+    ?>
+
       <div class="link-container">
-        <a href="https://www.semanticscholar.org/paper/CorrAUC%3A-A-Malicious-Bot-IoT-Traffic-Detection-in-Shafiq-Tian/026cbbb91e5a0d5b606917d14b385a2b84fee64e">The Black revolution on campus</a>
+        <a href="<? echo base_url().$a->pdf_file ?>" target="_blank"><? echo $a->title ?></a>
       </div>
-  
+
       <div class="description-container">
-          <p style="font-style: italic;">M Biondi - 2019 - degruyter.com</p>
-        <p>The Black Revolution on Campus is the definitive account of an extraordinary but forgotten chapter of the black freedom struggle. In the late 1960s and early 1970s, Black students organized hundreds of protests that sparked a period of crackdown, negotiation, and reform that profoundly transformed college life. At stake was the very mission of higher education. Black students demanded that public universities serve their communities; that private universities rethink the mission of elite education; and that black colleges embrace self-determination and resist the threat of integration. Most crucially, black students demanded a role in the definition of scholarly knowledge.</p>
+          <p style="font-style: italic;"><? echo $a->author ?> - <?echo $a->year ?></p>
+        <p><? echo $text[1] ? substr($text[1], 0, 400) : substr($text[0], 0, 400) ?></p>
       </div>
+      <hr>
+
+    <? } ?>  
+      
   </div>
 </div>
 

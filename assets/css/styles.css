@@ -34,13 +34,15 @@ body {
   }
 
   nav ul li a {
-    padding: 10px;
+    padding: 5px;
     color: #fff;
     text-decoration: none;
+    font-size: 16px;
   }
 
   nav ul li a:hover {
-    background-color:#45a049;
+    background-color: #bfbbbb;
+    display: block;
   }
 
   .dropdown {

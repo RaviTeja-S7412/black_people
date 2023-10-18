@@ -72,7 +72,7 @@ class Users extends CI_Controller {
             $record_id=$this->input->post('record_id');
             $fname=$this->input->post('fname');
             $lname=$this->input->post('lname');
-            $password=$this->input->post('password');
+            $password=$this->secure->encrypt($this->input->post('password'));
             $mobile=$this->input->post('mobile');
             $email=$this->input->post('email');
 

@@ -28,6 +28,12 @@ class Home extends CI_Controller {
 		$this->load->view('index');
 	}
 
+	
+	public function search()
+	{
+		$this->load->view('search');
+	}
+
 	public function login()
 	{
 		$this->load->view('login');
@@ -43,6 +49,42 @@ class Home extends CI_Controller {
 		$this->load->view('signup');
 	}
 
+	public function getPdfdata(){
+
+		$search = $this->input->post("search");
+		$sort_by = $this->input->post("sort_by");
+
+		if($sort_by){
+			$this->db->order_by($sort_by, 'asc');
+		}
+		$data = $this->db->like('extracted_text',$search)->get_where("tbl_pdfs")->result();
+
+		$fData = [];
+		foreach($data as $dp){
+
+			$wcount = 0; 
+			$iText = '';
+			$text = json_decode($dp->extracted_text);
+			foreach($text as $k => $t){
+				
+				if(stripos($t, $search) !== false){
+
+					$str = explode(",", $t);
+					foreach($str as $sk => $s){
+						if(stripos($s, $search) !== false){
+							$iText .= str_ireplace($search,"<span style='background-color: yellow'><b>$search</b></span>",$s);
+							$wcount += 1;
+						}
+					}
+
+				}
+
+			}
+
+			$fData[] = ["file_name" => $dp->file_name,"text" => $iText, "author" => $dp->author, "year" => $dp->year, "pdf_file"=>$dp->pdf_file, "word_count"=>$wcount];
+		}
+		echo json_encode($fData);		
+	}
 	
 	public function insertUser()
 	{

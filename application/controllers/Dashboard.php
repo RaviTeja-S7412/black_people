@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+require_once(APPPATH.'libraries/vendor/autoload.php');
 
 class Dashboard extends CI_Controller {
 
@@ -31,19 +32,9 @@ class Dashboard extends CI_Controller {
 		$this->load->view('index');
 	}
 
-	public function employees()
+	public function pdfs()
 	{
-		$this->load->view('employees');
-	}
-
-	public function schedules()
-	{
-		$this->load->view('schedules');
-	}
-	
-	public function createSchedule()
-	{
-		$this->load->view('createSchedule');
+		$this->load->view('pdf_upload');
 	}
 	
 	public function deleteEmployee($eid)
@@ -60,57 +51,106 @@ class Dashboard extends CI_Controller {
 		}
 
 	}
-
-	public function updateStation()
-	{
-		$station = $this->input->post('station');
-		$employee_id = $this->input->post('eid');
-
-		if($station == ""){
-			echo json_encode(["status"=>false, "msg"=>"Station Is Required"]);
-			exit;
-		}
-		if($employee_id == ""){
-			echo json_encode(["status"=>false, "msg"=>"Employee ID Is Required"]);
-			exit;
-		}
-
-		$d = $this->db->where("id",$employee_id)->update("tbl_users",["station"=>$station]);
-
-		if($d){
-			echo json_encode(["status"=>true, "msg"=>"Successfully Updated"]);
-			exit;
-		}else{
-			echo json_encode(["status"=>false, "msg"=>"Error Occured"]);
-			exit;
-		}
-	}
 	
-	public function insertSchedule()
+	public function upload_files()
 	{
 		$user_id = $this->session->userdata('user_id');
-		$start_time = $this->input->post('start_time');
-		$end_time = $this->input->post('end_time');
-		$station = $this->input->post('station');
-		$employee_id = $this->input->post('employee_id');
+		$author = $this->input->post('author');
+		$year = $this->input->post('year');
+		$title = $this->input->post('title');
 
-		$chkSchedule = $this->db->get_where("tbl_schedules", ["employee_id"=>$employee_id, "start_time"=>$start_time, "end_time"=>$end_time])->num_rows();
+		$fChk = $this->db->get_where("tbl_pdfs",["file_name"=>$_FILES['file']['name'],"author"=>$author,"year"=>$year])->num_rows();
 
-		if($chkSchedule > 0){
-			echo json_encode(["status"=>false, "msg"=>"Schedule Already Created"]);
-			exit;
+		// print_r(["file_name"=>$_FILES['file']['name'],"author"=>$author,"year"=>$year]);
+		// echo $fChk;
+		// exit;
+
+		if ($fChk > 0)
+		{
+			$this->session->set_flashdata('error', "File Already Uploaded.");
+			redirect('dashboard/pdfs');
 		}
 
-		$d = $this->db->insert("tbl_schedules", ["created_by"=>$user_id,"station"=>$station,"start_time"=>$start_time,"end_time"=>$end_time,"employee_id"=>$employee_id]);
+		$config['upload_path']          = 'uploads/pdfs/';
+		$config['allowed_types']        = 'pdf|txt';
+		$config['encrypt_name']        = true;
 
-		if($d){
-			echo json_encode(["status"=>true, "msg"=>"Successfully Created"]);
-			exit;
+		$this->load->library('upload', $config);
+
+		if ( ! $this->upload->do_upload('file'))
+		{
+			$this->session->set_flashdata('error', $this->upload->display_errors());
+			redirect('dashboard/pdfs');
+		}
+		else
+		{
+			$fd=$this->upload->data();
+			
+			$oName = $fd['client_name'];
+			$file = "uploads/pdfs/".$fd['file_name'];
+
+			if($fd['file_ext'] == '.txt'){
+				
+				$fh = fopen($file,'r');
+				$eText = '';
+				while ($line = fgets($fh)) {
+					$eText .= $line;
+				}
+				fclose($fh);
+
+				$text = [preg_replace('/[\x00-\x1F\x80-\xFF]/', '', str_replace([':', '\\', '/', '*', '\n', '<', '>'], '', trim($eText)))];
+
+			}else{
+
+				$config = new \Smalot\PdfParser\Config();
+				$config->setFontSpaceLimit(-60);
+				$parser = new \Smalot\PdfParser\Parser([], $config);
+				$pdf = $parser->parseFile(base_url().$file);
+				$text1 = $pdf->getText();
+
+				$pCount = $pdf->getPages();
+
+				$text = [];
+				for ($i=0; $i < count($pCount); $i++) { 
+					$str = trim($pCount[$i]->getText());
+					array_push($text, str_replace([':', '\\', '/', '*', '\n', '<', '>'], '', $str));
+				}
+
+			}
+
+			$d = $this->db->insert("tbl_pdfs", ["created_by"=>$user_id,"pdf_file"=>$file, "extracted_text"=> json_encode($text), "author"=>$author,"year"=>$year, "file_name"=>$oName, "title" => $title]);
+
+			if($d){
+				$this->session->set_flashdata('success', "PDF Successfully Uploaded.");
+				redirect('dashboard/pdfs');
+			}else{
+				$this->session->set_flashdata('error', "Error Occured");
+				redirect('dashboard/pdfs');
+			}
+		}
+
+	}
+
+	public function deletePdf($eid)
+	{
+
+		$pData = $this->db->get_where("tbl_pdfs", ["id"=>$eid])->row();
+		$del = unlink($pData->pdf_file);
+
+		if($del){
+			$d = $this->db->delete("tbl_pdfs", ["id"=>$eid]);
+
+			if($d){
+				echo json_encode(["status"=>true, "msg"=>"Successfully Deleted"]);
+				exit;
+			}else{
+				echo json_encode(["status"=>false, "msg"=>"Error Occured"]);
+				exit;
+			}
 		}else{
 			echo json_encode(["status"=>false, "msg"=>"Error Occured"]);
 			exit;
-		}
-
+		}	
 	}
 	
 }

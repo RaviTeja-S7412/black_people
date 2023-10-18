@@ -20,7 +20,7 @@
 <body>
 <header>
   <h1>History of Black People</h1>
-  <span style="position: absolute; top: 70px; right: 10px; color: #fff;">User</span>
+  <span style="position: absolute; top: 70px; right: 10px; color: #fff;"><? echo $this->session->userdata('user_name') ?></span>
 </header>
 
 <div class="container1" style="display: flex;">
@@ -29,10 +29,16 @@
       <li><a href="<? echo base_url() ?>">Home</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a href="<? echo base_url()."users/view" ?>">Users</a></li>
-
-      <?php if ($this->session->userdata('role') == "employee") { ?>
-
+    
+      <?php if ($this->session->userdata('role') == "employee" || $this->session->userdata('role') == "admin") { ?>
+        <li class="dropdown"><a href="<? echo base_url('dashboard/pdfs') ?>">Query Database</a></li>
       <? } ?>
+      
+      <?php if ($this->session->userdata('role') == "admin") { ?>
+        <li><a href="<? echo base_url()."users/view" ?>">Users</a></li>
+      <? } ?>
+      <?php if ($this->session->userdata('user_id')) { ?>
+        <li><a href="<? echo base_url()."home/logout" ?>">Logout</a></li>
+      <? } ?>  
     </ul>
   </nav>
