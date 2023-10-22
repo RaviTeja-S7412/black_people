@@ -152,7 +152,8 @@ $this->load->view('includes/header')
         }
         $pdfs = $this->db->order_by("id","desc")->get_where("tbl_pdfs")->result();
         foreach ($pdfs as $pdf) {
-          echo '<li id="file-item-1" style="width:99%">' . $pdf->file_name . ' <button onclick="archiveFunction('.$pdf->id.')">Delete</button></li>';
+          $udata = $this->db->get_where("tbl_users",["id"=>$pdf->created_by])->row();
+          echo '<li id="file-item-1" style="width:99%">' . $pdf->file_name .' ('.$udata->first_name. ' ' .$udata->last_name.') <button onclick="archiveFunction('.$pdf->id.')">Delete</button></li>';
         }
 
       ?>

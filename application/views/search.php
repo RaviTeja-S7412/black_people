@@ -196,6 +196,9 @@ $this->load->view('includes/footer')
         $(".result").html('<div class="bg" align="center" style="margin-top: 50px;"><div class="loader" id="loader-1"></div></div>')
       },
       success: function(data) {
+        
+        console.log(JSON.parse(JSON.stringify(data)))
+        $('.result').html('');
 
         var text = '';
         if (data.length > 0) {
@@ -203,8 +206,13 @@ $this->load->view('includes/footer')
           $(".resultCount").html(data.length + ' ' + rText + ' found')
           data.map((t) => {
             var url = '<? echo base_url() ?>' + t.pdf_file + '';
-            var wText = t.word_count == 1 ? 'word' : 'words';
-            text += '<div class="result-container"><div class="link-container"><a href="' + url + '" target="_blank">' + t.file_name + '</a><a href="' + url + '" target="_blank" download style=""><i class="fa fa-download" style="font-size: 20px; padding: 0px;"></i></a><span class="pull-right m-4">' + t.word_count + ' ' + wText + ' found</span><br><span class="" style="font-style: italic;margin-left: 20px;">' + t.author + ' - ' + t.year + '</span></div><div class="description-container">' + t.text + '</div></div>';
+            var texturl = '<? echo base_url('home/downloadText/') ?>' + t.file_id + '';
+            var wText = '';
+            Object.keys(t.word_count).length > 0 && Object.keys(t.word_count).map((wc, k) => {
+              wText += wc+': '+Object.values(t.word_count)[k]+', ';
+            })
+
+            text += '<div class="result-container"><div class="link-container"><a href="' + url + '" target="_blank">' + t.file_name + '</a><a href="' + url + '" target="_blank" data-toggle="tooltip" title="Download Pdf" download style=""><i class="fa fa-file-pdf" style="font-size: 20px; padding: 0px; color: black;"></i></a><a href="' + texturl + '" target="_blank" data-toggle="tooltip" title="Download Text" download style=""><i class="fa fa-file-text" style="font-size: 20px; padding: 0px; color: black;"></i></a><span class="pull-right m-4">(' + wText + ')</span><br><span class="" style="font-style: italic;margin-left: 20px;">' + t.author + ' - ' + t.year + '</span></div><div class="description-container">' + t.text + '</div></div>';
           })
         } else {
           text += '<p>No Matches Found</p>';

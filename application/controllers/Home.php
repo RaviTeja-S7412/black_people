@@ -53,6 +53,7 @@ class Home extends CI_Controller {
 
 		$search = $this->input->post("search");
 		$sort_by = $this->input->post("sort_by");
+		$search_words = explode(" ", $search);
 
 		if($sort_by){
 			$this->db->order_by($sort_by, 'asc');
@@ -60,6 +61,7 @@ class Home extends CI_Controller {
 		$data = $this->db->like('extracted_text',$search)->get_where("tbl_pdfs")->result();
 
 		$fData = [];
+		$swords_count = [];
 		foreach($data as $dp){
 
 			$wcount = 0; 
@@ -72,18 +74,84 @@ class Home extends CI_Controller {
 					$str = explode(",", $t);
 					foreach($str as $sk => $s){
 						if(stripos($s, $search) !== false){
-							$iText .= str_ireplace($search,"<span style='background-color: yellow'><b>$search</b></span>",$s);
 							$wcount += 1;
 						}
 					}
 
 				}
+				$iText .= str_ireplace($search,"<span style='background-color: yellow'><b>$search</b></span>",$t);
 
 			}
 
-			$fData[] = ["file_name" => $dp->file_name,"text" => $iText, "author" => $dp->author, "year" => $dp->year, "pdf_file"=>$dp->pdf_file, "word_count"=>$wcount];
+			$fData[$dp->id] = ["file_id"=>$dp->id,"file_name" => $dp->file_name, "author" => $dp->author, "year" => $dp->year, "pdf_file"=>$dp->pdf_file, "text"=>$iText, "word_count" => []];
+			$swords_count[] = ["file_id"=>$dp->id, "word_key" => $search, "word_count" =>$wcount ];
 		}
-		echo json_encode($fData);		
+
+		// $swr[] = "<span style='background-color: yellow'><b>$search</b></span>";
+		$swr = [];
+		foreach($search_words as $swc){
+			$swr[] = "<span style='background-color: yellow'><b>$swc</b></span>";
+		}
+		
+		foreach($search_words as $sw){
+
+			$data1 = $this->db->like('extracted_text',$sw)->get_where("tbl_pdfs")->result();
+
+			foreach($data1 as $dp1){
+				$wcount1 = 0;
+				$iText1 = '';
+				$text1 = json_decode($dp1->extracted_text);
+				foreach($text1 as $k => $t1){
+
+					if(stripos($t1, $sw) !== false){
+
+						$str1 = explode(",", $t1);
+						foreach($str1 as $sk => $s1){
+							if(stripos($s1, $sw) !== false){
+								$wcount1 += 1;
+							}
+						}
+
+					}
+					$iText1 .= str_ireplace($sw,"<span style='background-color: yellow'><b>$sw</b></span>",$t1);
+
+				}
+				
+				$fData[$dp1->id] = ["file_id"=>$dp1->id,"file_name" => $dp1->file_name, "author" => $dp1->author, "year" => $dp1->year, "pdf_file"=>$dp1->pdf_file,"text"=>$iText1, "word_count" => []];
+				$swords_count[] = ["file_id"=>$dp1->id, "word_key" => $sw, "word_count" =>$wcount1];
+				
+			}
+
+		}
+
+		foreach($swords_count as $sc){
+			if($sc['file_id'] == $fData[$sc['file_id']]['file_id']){
+
+				$fText = str_ireplace($search_words,$swr,$fData[$sc['file_id']]['text']);
+				$fData[$sc['file_id']]['word_count'][$sc['word_key']] = $sc['word_count'];
+				$fData[$sc['file_id']]['text'] = $fText;
+			}
+		}
+
+		$finalData = [];
+		foreach($fData as $fd){
+			$finalData[] = $fd;
+		}	
+
+		echo json_encode($finalData);		
+	}
+
+	public function downloadText($id)
+	{
+		$data = $this->db->get_where("tbl_pdfs",["id"=>$id])->row();
+		$filename = basename($data->file_name).".txt";
+		header("Content-type: text/plain");
+		header("Content-Disposition: attachment; filename=$filename");
+
+		$text = json_decode($data->extracted_text);
+		foreach($text as $t){
+			print $t;
+		}
 	}
 	
 	public function insertUser()

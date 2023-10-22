@@ -129,6 +129,8 @@ body {
     margin-left: 10px;
     text-align: left;
     order: 4; /* Move description container below the link container */
+    height: 200px;
+    overflow: auto;
   }
 
   .image-slider {
