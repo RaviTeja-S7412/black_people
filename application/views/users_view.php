@@ -10,7 +10,7 @@ $this->load->view('includes/header')
                 <centre>Users List</centre>
             </h2>
         </div>
-        <div class='col-md-2'><button type="button" class="btn btn-primary btn-sm add_users mt-3 mr-3" style="float:right;" id="add_users" name="add_users">Add User</button></div>
+        <div class='col-md-2'><!-- <button type="button" class="btn btn-primary btn-sm add_users mt-3 mr-3" style="float:right;" id="add_users" name="add_users">Add User</button> --></div>
     </div>
         <div class="container-fluid">
             <table id="users_datatable" class="table table-striped" style="width:90%">

@@ -71,20 +71,33 @@
 <body>
     <h2><span style="color: red; font-family: Verdana, Geneva, Tahoma, sans-serif;">Login Page</span></h2>
     
-    <form method="POST" id="loginUser">
+    <form method="POST" id="registerUser">
+        <div>
+            <label for="username">First Name:</label>
+            <input type="text" name="fname" style="width: 280px;" required="">
+        </div>
+        <div>
+            <label for="username">Last Name:</label>
+            <input type="text" name="lname" style="width: 280px;" required="">
+        </div>
         <div>
             <label for="username">Email:</label>
-            <input type="text" id="email" name="email" style="width: 280px;" required="">
+            <input type="text" name="email" style="width: 280px;" required="">
+        </div>
+        <div>
+            <label for="username">Mobile:</label>
+            <input type="text" name="mobile" style="width: 280px;" required="">
         </div>
         <div>
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" style="width: 280px;" required="">
+            <input type="password" name="password" style="width: 280px;" required="">
+        </div>
+        <div>
+            <label for="password">Confirm Password:</label>
+            <input type="password" name="cpassword" style="width: 280px;" required="">
         </div>
         <div class="container">
-            <input type="submit" value="Login" style="width: 100px; padding: 1;">
-        </div>
-        <div align="center">
-            <a href="<? echo base_url('home/register') ?>">Register Here</a>
+            <input type="submit" value="Register" style="width: 100px; padding: 1;">
         </div>
     </form>
     
@@ -93,7 +106,7 @@
 
 <script>
     $(document).ready(function(){
-        $("#loginUser").submit(function(e){
+        $("#registerUser").submit(function(e){
         e.preventDefault();
         var fdata = $(this).serialize();
         $.ajax({

@@ -1,6 +1,6 @@
 <?php
 defined("BASEPATH") or exit("NO direct script access allow");
-
+require_once(APPPATH.'libraries/sendgrid/sendgrid-php.php');
 
 class Secure extends CI_Model
 {
@@ -112,4 +112,17 @@ class Secure extends CI_Model
 			return false;
 		}
 	}
+
+	public function sendEmail($subject,$toemail,$content){
+		$ufrom = new SendGrid\Email("Expats Hub", "Historyofblackpeopledatabase@gmail.com");
+		$usubject = "Black People: $subject";
+		$uto = new SendGrid\Email("Expats Hub",$toemail);
+
+		$ucontent = new SendGrid\Content("text/html",$content);
+		$umail = new SendGrid\Mail($ufrom, $usubject, $uto, $ucontent);
+		$usg = new \SendGrid("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");
+		$uresponse = $usg->client->mail()->send()->post($umail);
+		return $uresponse;
+	}
+
 }

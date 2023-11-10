@@ -38,15 +38,15 @@ class Home extends CI_Controller {
 	{
 		$this->load->view('login');
 	}
+
+	public function register()
+	{
+		$this->load->view('register');
+	}
 	
 	public function forgot()
 	{
 		$this->load->view('forgot');
-	}
-
-	public function signup()
-	{
-		$this->load->view('signup');
 	}
 
 	public function getPdfdata(){
@@ -179,6 +179,8 @@ class Home extends CI_Controller {
 			"last_name" => $last_name,
 			"email" => $email,
 			"mobile" => $mobile_number,
+			'role'  => "employee", 
+            'status' => 'Active',
 			"password" => $this->secure->encrypt($password),
 			"created_date" => date("Y-m-d H:i:s")
 		];
@@ -187,7 +189,7 @@ class Home extends CI_Controller {
 		$lid = $this->db->insert_id();
 
 		if($d){
-
+			
 			echo json_encode(["status"=>200, "message"=>"Successfully Registered."]);
 			exit;
 		}else{
