@@ -36,6 +36,19 @@ class Dashboard extends CI_Controller {
 	{
 		$this->load->view('pdf_upload');
 	}
+
+	public function makeAdmin($id)
+	{
+
+		$d = $this->db->where('id', $id)->update("tbl_users", ["role"=>'employee']);
+
+		if($d){
+			redirect('users/view');
+		}else{
+			redirect('users/view');
+		}
+
+	}
 	
 	public function deleteEmployee($eid)
 	{

@@ -34,7 +34,7 @@ $this->load->view('includes/header')
                                 <td><?php echo $d['first_name'] . " " . $d['last_name']; ?></td>
                                 <td><?php echo $d['mobile']; ?></td>
                                 <td><?php echo $d['email']; ?></td>
-                                <td><?php echo $d['role']; ?></td>
+                                <td><?php echo ($d['role'] == 'admin') ? 'Super Admin' : ($d['role'] == 'employee' ? 'Admin' : '<a href="'.base_url('dashboard/makeAdmin/'.$d['id']).'" class="btn btn-sm btn-primary" onclick = "return confirm(\'Are you sure want to make admin?\')" >Make Admin</a>'); ?></td>
                                 <!-- <td><?php echo $d['password']; ?></td> -->
                                 <td>
                                     <i class="fa fa-edit edit_users" id="edit_users" user_id=<?php echo $d['id']; ?> style="font-size:12px;color:#00FFFF"></i>

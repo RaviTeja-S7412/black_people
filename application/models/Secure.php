@@ -114,13 +114,13 @@ class Secure extends CI_Model
 	}
 
 	public function sendEmail($subject,$toemail,$content){
-		$ufrom = new SendGrid\Email("Expats Hub", "Historyofblackpeopledatabase@gmail.com");
+		$ufrom = new SendGrid\Email("Expats Hub", "nukalakasiviswanath@gmail.com");
 		$usubject = "Black People: $subject";
 		$uto = new SendGrid\Email("Expats Hub",$toemail);
 
 		$ucontent = new SendGrid\Content("text/html",$content);
 		$umail = new SendGrid\Mail($ufrom, $usubject, $uto, $ucontent);
-		$usg = new \SendGrid("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");
+		$usg = new \SendGrid("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");
 		$uresponse = $usg->client->mail()->send()->post($umail);
 		return $uresponse;
 	}

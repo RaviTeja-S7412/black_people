@@ -69,7 +69,7 @@
     </style>
 </head>
 <body>
-    <h2><span style="color: red; font-family: Verdana, Geneva, Tahoma, sans-serif;">Login Page</span></h2>
+    <h2><span style="color: red; font-family: Verdana, Geneva, Tahoma, sans-serif;">Registration Page</span></h2>
     
     <form method="POST" id="registerUser">
         <div>
@@ -110,20 +110,16 @@
         e.preventDefault();
         var fdata = $(this).serialize();
         $.ajax({
-            "url": "<?php echo base_url("home/do_login") ?>",
+            "url": "<?php echo base_url("home/insertUser") ?>",
             "type": "POST",
             "data" : fdata,
             "dataType": 'json',
             "success" : function(data){
             if(data.status == 200){
                 // setTimeout(home, 3000); 
-                window.location.href = "<?php echo base_url("home/dashboard")?>";
+                window.location.href = "<?php echo base_url("home/login")?>";
             }else{
-                Swal.fire(
-                'Error',
-                data.message,
-                'error'
-                )
+                alert(data.message);
             }
             },
             "error" : function(data){

@@ -156,10 +156,10 @@ class Home extends CI_Controller {
 	
 	public function insertUser()
 	{
-		$first_name = $this->input->post('first_name');
-		$last_name = $this->input->post('last_name');
+		$first_name = $this->input->post('fname');
+		$last_name = $this->input->post('lname');
 		$email = $this->input->post('email');
-		$mobile_number = $this->input->post('mobile_number');
+		$mobile_number = $this->input->post('mobile');
 		$password = $this->input->post('password');
 		$cpassword = $this->input->post('cpassword');
 		
@@ -179,7 +179,7 @@ class Home extends CI_Controller {
 			"last_name" => $last_name,
 			"email" => $email,
 			"mobile" => $mobile_number,
-			'role'  => "employee", 
+			'role'  => "anonymous", 
             'status' => 'Active',
 			"password" => $this->secure->encrypt($password),
 			"created_date" => date("Y-m-d H:i:s")
@@ -189,7 +189,17 @@ class Home extends CI_Controller {
 		$lid = $this->db->insert_id();
 
 		if($d){
-			
+			$subject = "Login Credentials";
+			$toemail = $email;
+			$content = '
+				<p>
+					Dear '.$first_name." ".$last_name.', <br><br> 
+					Please find below login credentials:<br><br>
+					Username: '.$email.'<br>
+					Password: '.$password.'
+				</p>
+			';
+			$this->secure->sendEmail($subject, $toemail, $content);
 			echo json_encode(["status"=>200, "message"=>"Successfully Registered."]);
 			exit;
 		}else{
