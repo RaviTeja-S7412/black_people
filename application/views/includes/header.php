@@ -26,7 +26,7 @@
 <div class="container1" style="display: flex;">
   <nav>
     <ul>
-      <li><a href="<? echo base_url() ?>">Home</a></li>
+      <li><a href="<? echo base_url('home/dashboard') ?>">Home</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     

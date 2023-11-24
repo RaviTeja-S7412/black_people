@@ -18,7 +18,7 @@ $this->load->view('includes/header')
                     <tr>
                         <th><b>S.No</b></th>
                         <th><b>Name</b></th>
-                        <th><b>Mobile</b></th>
+                        <th><b>Institute/Company</b></th>
                         <th><b>Email</b></th>
                         <th><b>Role</b></th>
                         <th><b>Action</b></th>

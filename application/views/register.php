@@ -85,7 +85,7 @@
             <input type="text" name="email" style="width: 280px;" required="">
         </div>
         <div>
-            <label for="username">Mobile:</label>
+            <label for="username">Institute/Company:</label>
             <input type="text" name="mobile" style="width: 280px;" required="">
         </div>
         <div>

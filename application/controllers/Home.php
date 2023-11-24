@@ -25,7 +25,10 @@ class Home extends CI_Controller {
 
 	public function index()
 	{
-		$this->load->view('index');
+		if($this->session->userdata('user_id')){
+			redirect('home/dashboard');
+		}
+		$this->load->view('login');
 	}
 
 	
