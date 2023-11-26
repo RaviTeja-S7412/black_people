@@ -6,6 +6,8 @@
   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css" rel="stylesheet">
 
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
     <title>Login Page</title>
@@ -85,6 +87,9 @@
         </div>
         <div align="center">
             <a href="<? echo base_url('home/register') ?>">Register Here</a>
+        </div>
+        <div align="center">
+            <a href="<? echo base_url('home/forgot') ?>">Forgot Password</a>
         </div>
     </form>
     

@@ -278,6 +278,56 @@ class Home extends CI_Controller {
 	
 	}
 
+	public function sendOtp()
+	{
+
+		$email = $this->input->post('email');
+		$eChk = $this->db->get_where("tbl_users",["email"=>$email])->num_rows();
+		if($eChk == 0){
+			echo json_encode(["status"=>400, "message"=>"Please enter valid email id."]);
+			exit;
+		}
+
+		/* $otp = random_string('numeric', 6);
+		$this->db->where("email",$email)->update("tbl_users",["otp"=>$otp]);
+
+		$subject = "Email Verification";
+		$toemail = $email;
+		$content = "<div>OTP is: $otp</div>";
+		$this->secure->sendEmail($subject, $toemail, $content); */
+
+		echo json_encode(["status"=>200, "email"=>$email, "message"=>"Please enter otp shared to your email id."]);
+		exit;
+	}
+
+	public function verifyOtp(){
+	
+		$user_id = $this->input->post("id");
+		$otp = $this->input->post("otp");
+		
+		$mchk = $this->db->order_by("id","desc")->get_where("tbl_users",array("id"=>$user_id, "otp"=>$otp))->num_rows();
+		
+		if($mchk >= 1){
+	
+			$pchk = $this->db->where("id",$user_id)->update("tbl_users",array("status"=>"Active"));
+			
+			if($pchk){
+				echo json_encode(["status"=>200,"message"=>"OTP Veried successfully."]);
+				exit;
+			}else{
+				echo json_encode(["status"=>400,"message"=>"Error Occured."]);
+				exit;
+			}
+	
+		}else{
+			
+			echo json_encode(["status"=>400,"message"=>"Invalid Otp."]);
+			exit;
+			
+		}
+		
+	}
+
 	public function logout(){
 		$this->session->sess_destroy();
 		redirect("home/login");

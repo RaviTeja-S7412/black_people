@@ -111,7 +111,7 @@ class Dashboard extends CI_Controller {
 				}
 				fclose($fh);
 
-				$text = [preg_replace('/[\x00-\x1F\x80-\xFF]/', '', str_replace([':', '\\', '/', '*', '\n', '<', '>'], '', trim($eText)))];
+				$text = [preg_replace('/[\x00-\x1F\x80-\xFF]/', '', str_replace([':', '\\', '/', '*', '\n', '<', '>', '"'], '', trim($eText)))];
 
 			}else{
 
@@ -126,7 +126,7 @@ class Dashboard extends CI_Controller {
 				$text = [];
 				for ($i=0; $i < count($pCount); $i++) { 
 					$str = trim($pCount[$i]->getText());
-					array_push($text, str_replace([':', '\\', '/', '*', '\n', '<', '>'], '', $str));
+					array_push($text, str_replace([':', '\\', '/', '*', '\n', '<', '>', '"'], '', $str));
 				}
 
 			}
